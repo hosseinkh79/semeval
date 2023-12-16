@@ -10,7 +10,7 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
     model.train()
     train_loss, train_acc = 0, 0
 
-    for d in train_dataloader:
+    for i, d in enumerate(train_dataloader):
         input_ids = d["input_ids"].to(device)
         attention_mask = d["attention_mask"].to(device)
         targets = d["targets"].to(device)
@@ -30,6 +30,9 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
         loss.backward()
 
         optimizer.step()
+
+        if i % 50 == 0:
+            print(f'i : {i}')
 
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
         train_acc += ((y_pred_class == targets).sum().item())/len(y_pred)
@@ -59,11 +62,8 @@ def one_step_val(model, val_dataloader, loss_fn, device):
             )
 
             y_pred = y_pred.logits
-
-            _, preds = torch.max(y_pred, dim=1)
             loss = loss_fn(y_pred, targets)
 
-            correct_predictions += torch.sum(preds == targets)
             train_loss += loss.item()
 
             y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
