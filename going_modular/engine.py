@@ -1,10 +1,10 @@
 import torch
 from torch import nn
 from tqdm.auto import tqdm
+import torch.nn.functional as F
 
 
-
-#Train and validation 
+# Train and validation
 def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
     model = model.to(device)
 
@@ -12,10 +12,11 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
     train_loss, train_acc = 0, 0
 
     for batch, (X, y) in enumerate(train_dataloader):
-        
+
         X, y = X.to(device), y.to(device)
 
         y_pred = model(X)
+
         loss = loss_fn(y_pred, y)
         train_loss += loss.item()
 
@@ -32,7 +33,6 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
     train_acc = train_acc/len(train_dataloader)
 
     return train_loss, train_acc
-
 
 
 def one_step_val(model, val_dataloader, loss_fn, device):
@@ -57,7 +57,7 @@ def one_step_val(model, val_dataloader, loss_fn, device):
         val_acc = val_acc/len(val_dataloader)
 
     return val_loss, val_acc
-        
+
 
 def train(model,
           train_dataloader,
@@ -66,25 +66,25 @@ def train(model,
           optimizer,
           device,
           epochs):
-    
+
     results = {
-            'train_loss':[],
-            'train_acc':[],
-            'val_loss':[],
-            'val_acc':[]
-        }
-    
+        'train_loss': [],
+        'train_acc': [],
+        'val_loss': [],
+        'val_acc': []
+    }
+
     for epoch in range(epochs):
 
         train_loss, train_acc = one_step_train(model,
-                                                train_dataloader,
-                                                loss_fn, optimizer,
-                                                device)
+                                               train_dataloader,
+                                               loss_fn, optimizer,
+                                               device)
 
         val_loss, val_acc = one_step_val(model,
-                                        val_dataloader,
-                                        loss_fn,
-                                        device)
+                                         val_dataloader,
+                                         loss_fn,
+                                         device)
 
         results['train_loss'].append(train_loss)
         results['train_acc'].append(train_acc)
@@ -92,11 +92,11 @@ def train(model,
         results['val_acc'].append(val_acc)
 
         print(
-          f"Epoch: {epoch+1} | "
-          f"train_loss: {train_loss:.4f} | "
-          f"train_acc: {train_acc:.4f} | "
-          f"val_loss: {val_loss:.4f} | "
-          f"val_acc: {val_acc:.4f}"
+            f"Epoch: {epoch+1} | "
+            f"train_loss: {train_loss:.4f} | "
+            f"train_acc: {train_acc:.4f} | "
+            f"val_loss: {val_loss:.4f} | "
+            f"val_acc: {val_acc:.4f}"
         )
-        
+
     return results
