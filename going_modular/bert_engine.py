@@ -58,6 +58,8 @@ def one_step_val(model, val_dataloader, loss_fn, device):
                 attention_mask=attention_mask
             )
 
+            y_pred = y_pred.logits
+
             _, preds = torch.max(y_pred, dim=1)
             loss = loss_fn(y_pred, targets)
 
