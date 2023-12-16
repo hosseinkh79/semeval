@@ -64,7 +64,7 @@ def one_step_val(model, val_dataloader, loss_fn, device):
             y_pred = y_pred.logits
             loss = loss_fn(y_pred, targets)
 
-            train_loss += loss.item()
+            val_loss += loss.item()
 
             y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
             val_acc += ((y_pred_class == targets).sum().item())/len(y_pred)
