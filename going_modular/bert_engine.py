@@ -31,9 +31,6 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
 
         optimizer.step()
 
-        if i % 50 == 0:
-            print(f'i : {i}')
-
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
         train_acc += ((y_pred_class == targets).sum().item())/len(y_pred)
 
