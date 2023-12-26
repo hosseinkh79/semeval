@@ -6,6 +6,8 @@
 going_modular/__pycache__
 output
 semval.ipynb
+bert_semeval.ipynb
+data
 
 __pycache__/
 *.py[cod]

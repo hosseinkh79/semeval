@@ -8,19 +8,22 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
     model = model.to(device)
 
     model.train()
+
     train_loss, train_acc = 0, 0
 
-    for i, d in enumerate(train_dataloader):
-        input_ids = d["input_ids"].to(device)
-        attention_mask = d["attention_mask"].to(device)
-        targets = d["targets"].to(device)
+    for i, batch in enumerate(train_dataloader):
+        
+        input_ids , attention_mask, targets = batch
+
+        input_ids = input_ids.to(device)
+        attention_mask = attention_mask.to(device)
+        targets = targets.to(device)
 
         y_pred = model(
-            input_ids=input_ids,
+            input=input_ids,
             attention_mask=attention_mask
         )
 
-        y_pred = y_pred.logits
         loss = loss_fn(y_pred, targets)
         
         train_loss += loss.item()
@@ -41,6 +44,7 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
 
 
 def one_step_val(model, val_dataloader, loss_fn, device):
+
     model = model.to(device)
 
     model.eval()
@@ -48,17 +52,19 @@ def one_step_val(model, val_dataloader, loss_fn, device):
 
     with torch.inference_mode():
 
-        for d in val_dataloader:
-            input_ids = d["input_ids"].to(device)
-            attention_mask = d["attention_mask"].to(device)
-            targets = d["targets"].to(device)
+        for i, batch in enumerate(val_dataloader):
+            
+            input_ids , attention_mask, targets = batch
+
+            input_ids = input_ids.to(device)
+            attention_mask = attention_mask.to(device)
+            targets = targets.to(device)
 
             y_pred = model(
-                input_ids=input_ids,
+                input=input_ids,
                 attention_mask=attention_mask
             )
-
-            y_pred = y_pred.logits
+            
             loss = loss_fn(y_pred, targets)
 
             val_loss += loss.item()
@@ -72,7 +78,7 @@ def one_step_val(model, val_dataloader, loss_fn, device):
     return val_loss, val_acc
 
 
-def bert_train(model,
+def train(model,
                 train_dataloader,
                 val_dataloader,
                 loss_fn,
