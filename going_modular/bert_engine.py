@@ -3,6 +3,13 @@ from torch import nn
 from tqdm.auto import tqdm
 
 
+import torch
+from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
 # Train and validation
 def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
     model = model.to(device)
@@ -19,10 +26,13 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
         attention_mask = attention_mask.to(device)
         targets = targets.to(device)
 
+        # print(f'targets :\n {targets}')
+
         y_pred = model(
             input=input_ids,
             attention_mask=attention_mask
         )
+        # print(f'y_pred :\n {y_pred}')
 
         loss = loss_fn(y_pred, targets)
         
@@ -119,3 +129,58 @@ def train(model,
         )
 
     return results
+
+
+
+def evaluate_model(model, dataloader, device):
+    model.eval()
+    model.to(device)
+    all_predictions = []
+    all_targets = []
+
+    with torch.no_grad():
+        for i, batch in enumerate(dataloader):
+
+            input_ids , attention_mask, targets = batch
+
+            input_ids = input_ids.to(device)
+            attention_mask = attention_mask.to(device)
+            targets = targets.to(device)
+
+            # print(f'targets :\n {targets}')
+
+            y_pred = model(
+                input=input_ids,
+                attention_mask=attention_mask
+            )
+            # _, predictions = torch.max(y_pred, 1)
+            predictions = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
+
+            all_predictions.extend(predictions.cpu().numpy())
+            all_targets.extend(targets.cpu().numpy())
+
+    precision = precision_score(all_targets, all_predictions, average='macro', zero_division=1)
+    recall = recall_score(all_targets, all_predictions, average='macro')
+    f1 = f1_score(all_targets, all_predictions, average='macro')
+
+    print(
+        f"precision: {precision:.2f} | "
+        f"recall: {recall:.2f} | "
+        f"f1: {f1:.2f} \n "
+    )
+
+    cm = confusion_matrix(all_targets, all_predictions)
+
+    class_labels = [i for i in range(cm.shape[0])]  # Assuming class labels are integers
+    conf_matrix = confusion_matrix(all_targets, all_predictions, labels=class_labels)
+
+    # Plot confusion matrix using seaborn heatmap
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=class_labels, yticklabels=class_labels)
+    plt.xlabel("Predicted Labels")
+    plt.ylabel("Actual Labels")
+    plt.title("Confusion Matrix")
+    plt.show()
+
+    return precision, recall, f1, all_targets, all_predictions
+

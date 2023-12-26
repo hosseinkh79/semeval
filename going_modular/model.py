@@ -24,7 +24,8 @@ class Bert(nn.Module):
     def forward(self, input, attention_mask=None):
 
         outputs = self.bert(input, attention_mask=attention_mask)
-        output = outputs['pooler_output']
+        # output = outputs['pooler_output']
+        output = outputs['last_hidden_state'][:, 0, :]
         out = self.classifier(output)
 
         return out
