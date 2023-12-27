@@ -26,20 +26,18 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
         attention_mask = attention_mask.to(device)
         targets = targets.to(device)
 
-        # print(f'targets :\n {targets}')
-
-        y_pred = model(
-            input=input_ids,
-            attention_mask=attention_mask
-        )
+        # y_pred = model(
+        #     input=input_ids,
+        #     attention_mask=attention_mask
+        # )
 
         #when we use the BertForSequenceClassification
-        # y_pred = model(
-        #         input_ids,
-        #         attention_mask
-        #         )
+        y_pred = model(
+                input_ids,
+                attention_mask
+                )
     
-        # y_pred = y_pred.logits
+        y_pred = y_pred.logits
 
         loss = loss_fn(y_pred, targets)
         
@@ -77,18 +75,18 @@ def one_step_val(model, val_dataloader, loss_fn, device):
             attention_mask = attention_mask.to(device)
             targets = targets.to(device)
 
-            y_pred = model(
-                input=input_ids,
-                attention_mask=attention_mask
-            )
+            # y_pred = model(
+            #     input=input_ids,
+            #     attention_mask=attention_mask
+            # )
 
             #when we use the BertForSequenceClassification
-            # y_pred = model(
-            #         input_ids,
-            #         attention_mask
-            #         )
+            y_pred = model(
+                    input_ids,
+                    attention_mask
+                    )
         
-            # y_pred = y_pred.logits
+            y_pred = y_pred.logits
             
             loss = loss_fn(y_pred, targets)
 
@@ -166,18 +164,18 @@ def evaluate_model(model, dataloader, device):
 
             # print(f'targets :\n {targets}')
 
-            y_pred = model(
-                input=input_ids,
-                attention_mask=attention_mask
-            )
+            # y_pred = model(
+            #     input=input_ids,
+            #     attention_mask=attention_mask
+            # )
 
             #when we use the BertForSequenceClassification
-            # y_pred = model(
-            #         input_ids,
-            #         attention_mask
-            #         )
+            y_pred = model(
+                    input_ids,
+                    attention_mask
+                    )
         
-            # y_pred = y_pred.logits
+            y_pred = y_pred.logits
 
             predictions = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
 
