@@ -1,0 +1,1 @@
+lr=2e-5   acc=64   epoch=30  data=balanced 22000

@@ -32,7 +32,14 @@ def one_step_train(model, train_dataloader, loss_fn, optimizer, device):
             input=input_ids,
             attention_mask=attention_mask
         )
-        # print(f'y_pred :\n {y_pred}')
+
+        #when we use the BertForSequenceClassification
+        # y_pred = model(
+        #         input_ids,
+        #         attention_mask
+        #         )
+    
+        # y_pred = y_pred.logits
 
         loss = loss_fn(y_pred, targets)
         
@@ -74,6 +81,14 @@ def one_step_val(model, val_dataloader, loss_fn, device):
                 input=input_ids,
                 attention_mask=attention_mask
             )
+
+            #when we use the BertForSequenceClassification
+            # y_pred = model(
+            #         input_ids,
+            #         attention_mask
+            #         )
+        
+            # y_pred = y_pred.logits
             
             loss = loss_fn(y_pred, targets)
 
@@ -155,7 +170,15 @@ def evaluate_model(model, dataloader, device):
                 input=input_ids,
                 attention_mask=attention_mask
             )
-            # _, predictions = torch.max(y_pred, 1)
+
+            #when we use the BertForSequenceClassification
+            # y_pred = model(
+            #         input_ids,
+            #         attention_mask
+            #         )
+        
+            # y_pred = y_pred.logits
+
             predictions = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
 
             all_predictions.extend(predictions.cpu().numpy())

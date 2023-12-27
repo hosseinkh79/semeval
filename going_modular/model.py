@@ -14,11 +14,9 @@ class Bert(nn.Module):
             param.requires_grad = False
 
         self.classifier = nn.Sequential(
-            nn.Linear(self.bert.config.hidden_size, 512),
+            nn.Linear(self.bert.config.hidden_size, 100),
             nn.ReLU(),
-            nn.Linear(512, 50),
-            nn.ReLU(),
-            nn.Linear(50, num_classes)
+            nn.Linear(100, num_classes)
             )
 
     def forward(self, input, attention_mask=None):
