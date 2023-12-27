@@ -91,7 +91,8 @@ def one_step_val(model, val_dataloader, loss_fn, device):
 def train(model,
                 train_dataloader,
                 val_dataloader,
-                loss_fn,
+                loss_fn_train,
+                loss_fn_val,
                 optimizer,
                 device,
                 epochs):
@@ -107,12 +108,13 @@ def train(model,
 
         train_loss, train_acc = one_step_train(model,
                                                train_dataloader,
-                                               loss_fn, optimizer,
+                                               loss_fn_train, 
+                                               optimizer,
                                                device)
 
         val_loss, val_acc = one_step_val(model,
                                          val_dataloader,
-                                         loss_fn,
+                                         loss_fn_val,
                                          device)
 
         results['train_loss'].append(train_loss)
